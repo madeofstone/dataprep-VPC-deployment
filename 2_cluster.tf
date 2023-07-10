@@ -9,7 +9,7 @@ provider "kubernetes" {
 
 # Build gke cluster via private-cluster gke module provided by Google
 module "gke" {
-  source                      = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
+  source                      = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster-update-variant"
   project_id                  = var.project_id
   name                        = var.cluster
   regional                    = false
@@ -35,7 +35,7 @@ module "gke" {
   ip_range_services          = "services-range"
   ip_range_pods              = "pod-range"
   master_ipv4_cidr_block     = "10.1.0.0/28"
-
+  depends_on = [ google_service_account.dataprep-gke-sa ]
   node_pools = [
     {
       name              = "photon-job-pool"
@@ -48,7 +48,6 @@ module "gke" {
       autoscaling       = true
       auto_repair       = true
       auto_upgrade      = false
-      service_account   = google_service_account.dataprep-gke-sa.email
       preemptible       = false
       image_type        = "COS_CONTAINERD"
       machine_type      = "n1-standard-16"
@@ -67,7 +66,6 @@ module "gke" {
       autoscaling       = true
       auto_repair       = true
       auto_upgrade      = false
-      service_account   = google_service_account.dataprep-gke-sa.email
       preemptible       = false
       image_type        = "COS_CONTAINERD"
       machine_type      = "n1-standard-16"
@@ -86,14 +84,13 @@ module "gke" {
       autoscaling       = true
       auto_repair       = true
       auto_upgrade      = false
-      service_account   = google_service_account.dataprep-gke-sa.email
       preemptible       = false
       image_type        = "COS_CONTAINERD"
       machine_type      = "n1-standard-16"
       version           = "1.22.7-gke.1300"
       enable_integrity_monitoring = true
       enable_secure_boot          = true
-    }
+    },
   ]
 
   node_pools_taints = {
