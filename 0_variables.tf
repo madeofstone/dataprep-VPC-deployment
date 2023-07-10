@@ -1,6 +1,6 @@
 variable "project_id" {
     description = "project id"
-    default = "sales-engineering-1379"
+    default = ""
   }
 
   variable "region" {
@@ -30,10 +30,10 @@ variable "project_id" {
 
   variable "cluster" {
     description = "Name of GKE cluster to deploy"
-    default = "ts-dataprep-vpc-cluster2"
+    default = "dataprep-vpc-cluster"
   }
 
   variable "workspace_ip" {
     description = "ip address of machine running terraform script"
-    default = "134.238.79.142/32"
+    default = ""
   }
