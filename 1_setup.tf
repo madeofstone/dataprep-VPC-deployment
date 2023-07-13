@@ -33,7 +33,7 @@ data "google_compute_network" "dataprep-net" {
 
 # Reference subnet for gke deployment (must already exist)
 data "google_compute_subnetwork" "dataprep-subnet" {
-  name          = var.subnetwork
+  name          = var.subnet
   region        = var.region
 }
 

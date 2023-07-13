@@ -4,19 +4,19 @@
 # If a custom companion-SA already exists, or different roles are required, 
 # please edit accordingly
 
-variable "companion-sas" {
+locals {
   description = "key/value map of project to SA-name"
-  type = map(object({
-    sales-engineering-1379 = ts-datasa
-    dataprep-premium-demo = bhoang-looker-docs-service-acc
-  }))
+  companion_sas = {
+    "sales-engineering-1379" = "ts-datasa"
+    "dataprep-premium-demo" = "bhoang-looker-docs-service-acc"
+    }
 }
 
 module "companion-workload-identity" {
-  for_each = var.companion-sas
+  for_each =  local.companion_sas
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   use_existing_gcp_sa = true
-  name                = each.value
   project_id          = each.key
+  name                = each.value
   namespace           = "default"
 }

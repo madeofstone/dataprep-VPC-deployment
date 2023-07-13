@@ -18,7 +18,7 @@ module "gke" {
   network                     = var.network
   subnetwork                  = var.subnet
   create_service_account      = false
-  service_account             = data.dataprep-gke-sa.email
+  service_account             = data.google_service_account.dataprep-gke-sa.email
   enable_binary_authorization = true
   release_channel             = "UNSPECIFIED"
   node_metadata               = "GKE_METADATA"
