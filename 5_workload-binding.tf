@@ -4,24 +4,19 @@
 # If a custom companion-SA already exists, or different roles are required, 
 # please edit accordingly
 
-resource "google_service_account" "companion-sa" {
-  account_id   = "ts-testing-companion-sa"
-  display_name = "testing companion SAs with in-vpc terraform"
-}
-
-resource "google_project_iam_member" "companion-sa-role-binding" {
-    project = var.project_id
-    role = "roles/dataprep.serviceAgent"
-    member = "serviceAccount:${google_service_account.companion-sa.email}"
+variable "companion-sas" {
+  description = "key/value map of project to SA-name"
+  type = map(object({
+    sales-engineering-1379 = ts-datasa
+    dataprep-premium-demo = bhoang-looker-docs-service-acc
+  }))
 }
 
 module "companion-workload-identity" {
+  for_each = var.companion-sas
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   use_existing_gcp_sa = true
-  name                = google_service_account.companion-sa.account_id
-  project_id          = var.project_id
+  name                = each.value
+  project_id          = each.key
   namespace           = "default"
-  cluster_name        = var.cluster
-  # wait for the custom GSA to be created to force module data source read during apply
-  depends_on = [google_service_account.companion-sa]
 }

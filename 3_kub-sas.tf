@@ -120,4 +120,3 @@ output "trifacta_job_runner_token" {
   value = kubernetes_secret_v1.trifacta-job-runner-secret.data.token
   sensitive = true
 }
-

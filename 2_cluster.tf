@@ -16,9 +16,9 @@ module "gke" {
   region                      = var.region
   zones                       = var.zones
   network                     = var.network
-  subnetwork                  = google_compute_subnetwork.dataprep-subnet.name
+  subnetwork                  = var.subnet
   create_service_account      = false
-  service_account             = google_service_account.dataprep-gke-sa.email
+  service_account             = data.dataprep-gke-sa.email
   enable_binary_authorization = true
   release_channel             = "UNSPECIFIED"
   node_metadata               = "GKE_METADATA"
@@ -35,7 +35,6 @@ module "gke" {
   ip_range_services          = "services-range"
   ip_range_pods              = "pod-range"
   master_ipv4_cidr_block     = "10.1.0.0/28"
-  depends_on = [ google_service_account.dataprep-gke-sa ]
   node_pools = [
     {
       name              = "photon-job-pool"
@@ -50,8 +49,8 @@ module "gke" {
       auto_upgrade      = false
       preemptible       = false
       image_type        = "COS_CONTAINERD"
-      machine_type      = "n1-standard-16"
-      version           = "1.27.2-gke.2100"
+      machine_type      = var.photon-node-size
+      version           = "1.26.5-gke.1200"
       enable_integrity_monitoring = true
       enable_secure_boot          = true
     },
@@ -68,8 +67,8 @@ module "gke" {
       auto_upgrade      = false
       preemptible       = false
       image_type        = "COS_CONTAINERD"
-      machine_type      = "n1-standard-16"
-      version           = "1.22.7-gke.1300"
+      machine_type      = var.data-service-node-size
+      version           = "1.26.5-gke.1200"
       enable_integrity_monitoring = true
       enable_secure_boot          = true
     },
@@ -86,8 +85,8 @@ module "gke" {
       auto_upgrade      = false
       preemptible       = false
       image_type        = "COS_CONTAINERD"
-      machine_type      = "n1-standard-16"
-      version           = "1.22.7-gke.1300"
+      machine_type      = var.convert-node-size
+      version           = "1.26.5-gke.1200"
       enable_integrity_monitoring = true
       enable_secure_boot          = true
     },
@@ -123,27 +122,6 @@ module "gke" {
     },
   ]
 }
-
-/*
-# Create k8s namespaces (if required)
-resource "kubernetes_namespace" "photon" {
-  metadata {
-    name = "photon-job-namespace"
-  }
-}
-
-resource "kubernetes_namespace" "data-system" {
-  metadata {
-    name = "data-system-job-namespace"
-  }
-}
-
-resource "kubernetes_namespace" "convert" {
-  metadata {
-    name = "convert-job-namespace"
-  }
-}
-*/
 
 # Output cluster ca-cert
 output "ca_cert_base64" {
