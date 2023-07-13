@@ -34,7 +34,6 @@ module "gke" {
   gce_pd_csi_driver          = true
   ip_range_services          = "services-range"
   ip_range_pods              = "pod-range"
-  master_ipv4_cidr_block     = "10.1.0.0/28"
   node_pools = [
     {
       name              = "photon-job-pool"
@@ -137,4 +136,8 @@ output "ca_cert_decoded" {
 output "gke_endpoint" {
   value = module.gke.endpoint
   sensitive = true
+}
+
+output "node_pool_names" {
+  value = module.gke.node_pools_names
 }

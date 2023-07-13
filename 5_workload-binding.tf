@@ -5,18 +5,18 @@
 # please edit accordingly
 
 locals {
-  description = "key/value map of project to SA-name"
-  companion_sas = {
-    "sales-engineering-1379" = "ts-datasa"
-    "dataprep-premium-demo" = "bhoang-looker-docs-service-acc"
-    }
+  description = "set of companion SAs for workload binding"
+  companion_sas = [
+    "",
+    ""
+  ]
 }
 
 module "companion-workload-identity" {
-  for_each =  local.companion_sas
+  for_each =  toset(local.companion_sas)
   source              = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   use_existing_gcp_sa = true
-  project_id          = each.key
-  name                = each.value
+  project_id          = var.project_id
+  name                = each.key
   namespace           = "default"
 }
